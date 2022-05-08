@@ -1,6 +1,6 @@
 locals {
-  owner            = "cloudapp"
-  env                = "npci-preprod"
+  owner              = "cloudapp-npci"
+  env                = "preprod"
   cidr               = "10.255.0.0/20"
   intra_subnets      = []
   database_subnets   = ["10.255.0.0/24", "10.255.1.0/24"]

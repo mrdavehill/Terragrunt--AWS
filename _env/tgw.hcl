@@ -9,18 +9,22 @@ locals {
   name                                  = "tgw-${local.owner}-${local.env}"
   amazon_side_asn                       = local.env_vars.locals.amazon_side_asn
   transit_gateway_cidr_blocks           = local.env_vars.locals.transit_gateway_cidr_blocks
+  tags               = {
+    Terraform        = "true"
+    Environment      = local.env
+  }
 }
 
 dependency "appzone-pci" {
-  config_path = "../appzone-pci/${local.env}/vpc"
+  config_path = "../../../appzone-pci/${local.env}/vpc"
 }
 
 dependency "appzone-npci" {
-  config_path = "../appzone-npci/${local.env}/vpc"
+  config_path = "../../../appzone-npci/${local.env}/vpc"
 }
 
 dependency "cloudsec" {
-  config_path = "../cloudsec/${local.env}/vpc"
+  config_path = "../../../cloudsec/${local.env}/vpc"
 }
 
 inputs = {
@@ -33,8 +37,8 @@ inputs = {
 
   vpc_attachments = {
     appzone-pci                         = {
-      vpc_id                            = dependency.vpc.outputs.appzone-pci.vpc_id
-      subnet_ids                        = dependency.vpc.outputs.appzone-pci.private_subnets
+      vpc_id                            = dependency.appzone-pci.outputs.vpc_id
+      subnet_ids                        = dependency.appzone-pci.outputs.intra_subnets
       dns_support                       = true
       ipv6_support                      = false
 
@@ -52,8 +56,8 @@ inputs = {
       ]
     },
     appzone-npci                         = {
-      vpc_id                            = dependency.vpc.outputs.appzone-npci.vpc_id
-      subnet_ids                        = dependency.vpc.outputs.appzone-npci.private_subnets
+      vpc_id                            = dependency.appzone-npci.outputs.vpc_id
+      subnet_ids                        = dependency.appzone-npci.outputs.private_subnets
       dns_support                       = true
       ipv6_support                      = false
 
@@ -71,8 +75,8 @@ inputs = {
       ]
     },
     cloudsec = {
-      vpc_id                            = dependency.vpc.outputs.cloudsec.vpc_id
-      subnet_ids                        = dependency.vpc.outputs.cloudsec.private_subnets
+      vpc_id                            = dependency.cloudsec.outputs.vpc_id
+      subnet_ids                        = dependency.cloudsec.outputs.private_subnets
       dns_support                       = true
       ipv6_support                      = false
 
@@ -93,8 +97,7 @@ inputs = {
   }
 
   ram_allow_external_principals = true
-  ram_principals                = [307990089504]
+  ram_principals                = [973722329649]
 
-  tags = local.tags
-}
+  tags               = merge(local.tags)
 }
