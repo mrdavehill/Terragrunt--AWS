@@ -1,5 +1,5 @@
 locals {
-  product            = "cloudsec"
+  owner            = "cloudsec"
   env                = "preprod"
   cidr               = "10.255.64.0/20"
   intra_subnets      = ["10.255.65.0/24", "10.255.66.0/24"]

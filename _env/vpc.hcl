@@ -5,8 +5,8 @@ terraform {
 locals {
   env_vars           = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   env                = local.env_vars.locals.env
-  product            = local.env_vars.locals.product
-  name               = "${local.product}-${local.env}"
+  owner              = local.env_vars.locals.owner
+  name               = "${local.owner}-${local.env}"
   cidr               = local.env_vars.locals.cidr
   intra_subnets      = local.env_vars.locals.intra_subnets
   database_subnets   = local.env_vars.locals.database_subnets
