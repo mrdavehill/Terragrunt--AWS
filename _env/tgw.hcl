@@ -8,7 +8,6 @@ locals {
   owner                                 = local.env_vars.locals.owner
   name                                  = "tgw-${local.owner}-${local.env}"
   amazon_side_asn                       = local.env_vars.locals.amazon_side_asn
-  transit_gateway_cidr_blocks           = local.env_vars.locals.transit_gateway_cidr_blocks
   tags               = {
     Terraform        = "true"
     Environment      = local.env
@@ -32,7 +31,7 @@ inputs = {
   description                           = "${local.env} Transit Gateway"
   amazon_side_asn                       = local.amazon_side_asn
 
-  transit_gateway_cidr_blocks           = local.transit_gateway_cidr_blocks
+  #transit_gateway_cidr_blocks           = local.transit_gateway_cidr_blocks
   enable_auto_accept_shared_attachments = true
 
   vpc_attachments = {
@@ -41,63 +40,40 @@ inputs = {
       subnet_ids                        = dependency.appzone-pci.outputs.intra_subnets
       dns_support                       = true
       ipv6_support                      = false
-
+      vpc_route_table_ids               = dependency.appzone-pci.outputs.intra_route_table_ids
+      tgw_destination_cidr              = "0.0.0.0/0"
       transit_gateway_default_route_table_association = false
-      transit_gateway_default_route_table_propagation = false
+      transit_gateway_default_route_table_propagation = true
 
-      tgw_routes = [
-        {
-          destination_cidr_block = "20.0.0.0/16"
-        },
-        {
-          blackhole              = true
-          destination_cidr_block = "0.0.0.0/0"
-        }
-      ]
     },
-    appzone-npci                         = {
+    appzone-npci                        = {
       vpc_id                            = dependency.appzone-npci.outputs.vpc_id
       subnet_ids                        = dependency.appzone-npci.outputs.private_subnets
       dns_support                       = true
       ipv6_support                      = false
-
+      vpc_route_table_ids               = dependency.appzone-npci.outputs.private_route_table_ids
+      tgw_destination_cidr              = "0.0.0.0/0"
       transit_gateway_default_route_table_association = false
-      transit_gateway_default_route_table_propagation = false
+      transit_gateway_default_route_table_propagation = true
 
-      tgw_routes = [
-        {
-          destination_cidr_block = "30.0.0.0/16"
-        },
-        {
-          blackhole              = true
-          destination_cidr_block = "0.0.0.0/0"
-        }
-      ]
     },
     cloudsec = {
       vpc_id                            = dependency.cloudsec.outputs.vpc_id
       subnet_ids                        = dependency.cloudsec.outputs.private_subnets
       dns_support                       = true
       ipv6_support                      = false
-
-      transit_gateway_default_route_table_association = false
-      transit_gateway_default_route_table_propagation = false
-
-
+      transit_gateway_default_route_table_association = true
+      transit_gateway_default_route_table_propagation = true
+      
       tgw_routes = [
         {
-          destination_cidr_block = "50.0.0.0/16"
-        },
-        {
-          blackhole              = true
-          destination_cidr_block = "10.10.10.10/32"
+          destination_cidr_block = "0.0.0.0/0"
         }
       ]
-    },
+    }
   }
 
-  ram_allow_external_principals = true
-  ram_principals                = [973722329649]
+  share_tgw                      = false  
 
-  tags               = merge(local.tags)
+  tags                          = merge(local.tags)
 }

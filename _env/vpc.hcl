@@ -32,5 +32,12 @@ inputs = {
   private_subnets    = local.private_subnets
   enable_nat_gateway = local.enable_nat_gateway
   enable_vpn_gateway = local.enable_vpn_gateway
-  tags               = merge(local.tags)
+
+  enable_flow_log                                 = true
+  create_flow_log_cloudwatch_log_group            = true
+  flow_log_cloudwatch_log_group_name_prefix       = "${local.name}/flowlogs"
+  flow_log_cloudwatch_log_group_retention_in_days = 3
+  flow_log_destination_arn                        = get_aws_caller_identity_arn()
+  flow_log_cloudwatch_iam_role_arn                = "arn:aws:iam::973722329649:role/aws-service-role/organizations.amazonaws.com/AWSServiceRoleForOrganizations"
+  tags                                            = merge(local.tags)
 }
