@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/terraform-aws-modules/terraform-aws-transit-gateway//.?ref=v2.7.0"
+  source = "../../../../modules//terraform-aws-transit-gateway"
 }
 
 locals {
@@ -74,6 +74,5 @@ inputs = {
   }
 
   share_tgw                      = false  
-
   tags                          = merge(local.tags)
 }
