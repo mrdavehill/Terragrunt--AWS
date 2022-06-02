@@ -14,6 +14,7 @@ locals {
   private_subnets    = local.env_vars.locals.private_subnets
   enable_nat_gateway = local.env_vars.locals.enable_nat_gateway
   enable_vpn_gateway = local.env_vars.locals.enable_vpn_gateway
+  account_id         = data.aws_caller_identity.current.account_id
   region_vars        = read_terragrunt_config(find_in_parent_folders("region.hcl"))
   azs                = local.region_vars.locals.azs
   tags               = {
@@ -38,6 +39,6 @@ inputs = {
   flow_log_cloudwatch_log_group_name_prefix       = "${local.name}/flowlogs"
   flow_log_cloudwatch_log_group_retention_in_days = 3
   flow_log_destination_arn                        = get_aws_caller_identity_arn()
-  flow_log_cloudwatch_iam_role_arn                = "arn:aws:iam::973722329649:role/aws-service-role/organizations.amazonaws.com/AWSServiceRoleForOrganizations"
+  flow_log_cloudwatch_iam_role_arn                = "arn:aws:iam::${local.account_id}:role/aws-service-role/organizations.amazonaws.com/AWSServiceRoleForOrganizations"
   tags                                            = merge(local.tags)
 }

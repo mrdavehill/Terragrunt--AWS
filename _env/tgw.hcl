@@ -23,15 +23,13 @@ dependency "appzone-npci" {
 }
 
 dependency "cloudsec" {
-  config_path = "../../../cloudsec/${local.env}/vpc"
+  config_path = "../vpc"
 }
 
 inputs = {
   name                                  = local.name
   description                           = "${local.env} Transit Gateway"
   amazon_side_asn                       = local.amazon_side_asn
-
-  #transit_gateway_cidr_blocks           = local.transit_gateway_cidr_blocks
   enable_auto_accept_shared_attachments = true
 
   vpc_attachments = {
