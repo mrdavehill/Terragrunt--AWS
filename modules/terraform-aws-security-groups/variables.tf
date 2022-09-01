@@ -76,10 +76,10 @@ Use this format:
 
 ingress_with_cidr_blocks = {
   "allow ping inbound from all rfc 1918" = {
-    cidr_blocks                = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-    from_port                = -1
-    to_port                  = -1
-    protocol                 = "icmp"
+    cidr_blocks                          = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    from_port                            = -1
+    to_port                              = -1
+    protocol                             = "icmp"
   }}
 EOT  
 }
@@ -92,10 +92,10 @@ Use this format:
 
 egress_with_cidr_blocks = {
   "allow ping outbound to all rfc 1918" = {
-    cidr_blocks                = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-    from_port                = -1
-    to_port                  = -1
-    protocol                 = "icmp"
+    cidr_blocks                         = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    from_port                           = -1
+    to_port                             = -1
+    protocol                            = "icmp"
   }}
 EOT    
 }

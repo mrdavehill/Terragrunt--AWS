@@ -49,7 +49,7 @@ resource "aws_security_group_rule" "ingress_with_source_security_group_id_local"
 resource "aws_security_group_rule" "ingress_with_source_security_group_id_peer" {
   for_each                 = local.ingress_src_grp_id
   security_group_id        = each.value.source_security_group_id
-  type                     = "ingress"
+  type                     = "egress"
   source_security_group_id = aws_security_group.this.id
   description              = "${each.key}-peer"
   from_port                = each.value.from_port
@@ -76,7 +76,7 @@ resource "aws_security_group_rule" "egress_with_source_security_group_id_local" 
 resource "aws_security_group_rule" "egress_with_source_security_group_id_peer" {
   for_each                 = local.egress_src_grp_id
   security_group_id        = each.value.source_security_group_id 
-  type                     = "egress"
+  type                     = "ingress"
   source_security_group_id = aws_security_group.this.id
   description              = "${each.key}-peer"
   from_port                = each.value.from_port

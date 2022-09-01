@@ -2,9 +2,9 @@
 # Variables for testing module
 ###########################################################################
 
-name        = "sg_prepod_firewall_trust"
-description = "trust interface"
-vpc_id      = "vpc-xxxxxxxxxx"
+name                           = "sg_prepod_firewall_trust"
+description                    = "trust interface"
+vpc_id                         = "vpc-xxxxxxxxxx"
 
 ingress_with_source_security_group_id = {
   "ssh mgmt access" = {
@@ -37,7 +37,15 @@ egress_with_source_security_group_id = {
 ingress_with_cidr_blocks = {
   "allow ping inbound from all rfc 1918" = {
     cidr_blocks                = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-    from_port                = -1
-    to_port                  = -1
-    protocol                 = "icmp"
+    from_port                  = -1
+    to_port                    = -1
+    protocol                   = "icmp"
+  }}
+
+egress_with_cidr_blocks = {
+  "allow ping outbound to all rfc 1918" = {
+    cidr_blocks                = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    from_port                  = -1
+    to_port                    = -1
+    protocol                   = "icmp"
   }}
