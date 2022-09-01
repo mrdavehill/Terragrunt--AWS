@@ -58,7 +58,7 @@ resource "aws_security_group_rule" "ingress_with_source_security_group_id_peer" 
 }
 
 ###########################################################################
-# Egress - Maps of rules
+# Egress - egress_with_source_security_group_id
 # Create both local and peer rules
 ###########################################################################
 
