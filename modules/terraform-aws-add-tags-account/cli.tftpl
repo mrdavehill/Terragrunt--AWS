@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+OUTPUT=$(${input_string} | jq  -r -c '.${top}[] ${next}' | jq -R -s -c 'split("\n")' | jq '.[:-1]')
+
+jq -n -c --arg output "$OUTPUT" '{"output":$output}'
