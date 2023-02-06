@@ -34,6 +34,34 @@ locals {
   sqs_queue             = { for key, value in jsondecode(data.external.sqs_queues.result.output) : value => value }
 
   snapshot_arn          = { for key, value in jsondecode(data.external.snapshot_arns.result.output) : value => value }
+ 
+  endpoint_id           = { for key, value in jsondecode(data.external.endpoint_ids.result.output) : value => value }
+
+  vpc_id                = { for key, value in jsondecode(data.external.vpc_ids.result.output) : value => value }
+
+  subnet_id             = { for key, value in jsondecode(data.external.subnet_ids.result.output) : value => value }
+
+  sg_id                 = { for key, value in jsondecode(data.external.sg_ids.result.output) : value => value }
+
+  rt_id                 = { for key, value in jsondecode(data.external.rt_ids.result.output) : value => value }
+
+  vpcx_id               = { for key, value in jsondecode(data.external.vpcx_ids.result.output) : value => value }
+
+  igw_id                = { for key, value in jsondecode(data.external.igw_ids.result.output) : value => value }
+
+  nacl_id               = { for key, value in jsondecode(data.external.nacl_ids.result.output) : value => value }
+
+  ecr_id                = { for key, value in jsondecode(data.external.ecr_ids.result.output) : value => value }
+
+  alarm_arn             = { for key, value in jsondecode(data.external.alarm_arns.result.output) : value => value }
+
+  role_name             = { for key, value in jsondecode(data.external.role_names.result.output) : value => value }
+
+  policy_arn            = { for key, value in jsondecode(data.external.policy_arns.result.output) : value => value }
+  
+  user_name             = { for key, value in jsondecode(data.external.user_names.result.output) : value => value }
+
+  ami_id                = { for key, value in jsondecode(data.external.ami_ids.result.output) : value => value }
 
   tag_json              = jsonencode([
     for key, value in var.tags : {
@@ -69,6 +97,16 @@ locals {
             resource_id = item        
             tag_key     = key
             tag_value   = value
+            }]]))
+
+
+work_list3          = toset(flatten([
+    for index, item in jsondecode(data.external.asg_names.result.output) : [
+        for key, value in var.tags : {
+            block       = "${item}-${key}"
+            ResourceId  = item        
+            Key         = key
+            Value       = value
             }]]))
 }
 
@@ -292,6 +330,204 @@ resource "null_resource" "db_snapshots" {
     provisioner "local-exec" {
     command             = <<-EOT
       aws rds add-tags-to-resource --cli-input-json '{"ResourceName": "${each.value}", "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to ASGs
+####################################################################
+resource "null_resource" "asg_names" {
+  for_each              = {
+    for k, v in local.work_list3 :
+    v.block => v }
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws autoscaling create-or-update-tags --cli-input-json '{"Tags": [{"ResourceId": "${each.value.ResourceId}","ResourceType": "auto-scaling-group", "Key": "${each.value.Key}", "Value": "${each.value.Value}", "PropagateAtLaunch": true }]}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to endpoints
+####################################################################
+resource "null_resource" "endpoints" {
+  for_each              = local.endpoint_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to vpcs
+####################################################################
+resource "null_resource" "vpcs" {
+  for_each              = local.vpc_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to subnets
+####################################################################
+resource "null_resource" "subnets" {
+  for_each              = local.subnet_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to security groups
+####################################################################
+resource "null_resource" "security_groups" {
+  for_each              = local.sg_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+
+####################################################################
+# Add tags to route tables
+####################################################################
+resource "null_resource" "route_tables" {
+  for_each              = local.rt_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to vpc peering connections
+####################################################################
+resource "null_resource" "vpcx" {
+  for_each              = local.vpcx_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to igws
+####################################################################
+resource "null_resource" "igw" {
+  for_each              = local.igw_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to nacls
+####################################################################
+resource "null_resource" "nacl" {
+  for_each              = local.nacl_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to ecr repos
+####################################################################
+resource "null_resource" "ecr" {
+  for_each              = local.ecr_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ecr tag-resource --cli-input-json '{"resourceArn": "${each.value}", "tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to cloudwatch alarms
+####################################################################
+resource "null_resource" "alarms" {
+  for_each              = local.alarm_arn
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws cloudwatch tag-resource --cli-input-json '{"ResourceARN": "${each.value}", "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to iam roles
+####################################################################
+resource "null_resource" "roles" {
+  for_each              = local.role_name
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws iam tag-role --cli-input-json '{"RoleName": "${each.value}", "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to iam policies
+####################################################################
+resource "null_resource" "policies" {
+  for_each              = local.policy_arn
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws iam tag-policy --cli-input-json '{"PolicyArn": "${each.value}", "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to iam users
+####################################################################
+resource "null_resource" "users" {
+  for_each              = local.user_name
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws iam tag-user --cli-input-json '{"UserName": "${each.value}", "Tags": ${local.tag_json}}'
+    EOT
+  }
+}
+
+####################################################################
+# Add tags to vgws
+####################################################################
+resource "null_resource" "amis" {
+  for_each              = local.ami_id
+    
+    provisioner "local-exec" {
+    command             = <<-EOT
+      aws ec2 create-tags --cli-input-json '{"Resources": ["${each.value}"], "Tags": ${local.tag_json}}'
     EOT
   }
 }
