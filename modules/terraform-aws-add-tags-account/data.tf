@@ -206,3 +206,154 @@ data "external" "snapshot_arns" {
     "-c", 
     templatefile("cli.tftpl", {input_string = "aws rds describe-db-snapshots", top = "DBSnapshots", next = "| .DBSnapshotArn"})]
 }
+
+####################################################################
+# Create list of all ASG's
+####################################################################
+data "external" "asg_names" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws autoscaling describe-auto-scaling-groups", top = "AutoScalingGroups", next = "| .AutoScalingGroupName"})]
+}
+
+####################################################################
+# Create list of all vpc endpoints
+####################################################################
+data "external" "endpoint_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-vpc-endpoints", top = "VpcEndpoints", next = "| .VpcEndpointId"})]
+}
+
+####################################################################
+# Create list of all vpcs
+####################################################################
+data "external" "vpc_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-vpcs", top = "Vpcs", next = "| .VpcId"})]
+}
+
+####################################################################
+# Create list of all subnets
+####################################################################
+data "external" "subnet_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-subnets", top = "Subnets", next = "| .SubnetId"})]
+}
+
+####################################################################
+# Create list of all security groups
+####################################################################
+data "external" "sg_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-security-groups", top = "SecurityGroups", next = "| .GroupId"})]
+}
+
+####################################################################
+# Create list of all route-tables
+####################################################################
+data "external" "rt_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-route-tables", top = "RouteTables", next = "| .RouteTableId"})]
+}
+
+####################################################################
+# Create list of all vpc peering connections
+####################################################################
+data "external" "vpcx_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-vpc-peering-connections", top = "VpcPeeringConnections", next = "| .VpcPeeringConnectionId"})]
+}
+
+####################################################################
+# Create list of all igws
+####################################################################
+data "external" "igw_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-internet-gateways", top = "InternetGateways", next = "| .InternetGatewayId"})]
+}
+
+####################################################################
+# Create list of all nacls
+####################################################################
+data "external" "nacl_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-network-acls", top = "NetworkAcls", next = "| .NetworkAclId"})]
+}
+
+####################################################################
+# Create list of all ecr repos
+####################################################################
+data "external" "ecr_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ecr describe-repositories", top = "repositories", next = "| .repositoryArn"})]
+}
+
+####################################################################
+# Create list of cloudwatch alarms
+####################################################################
+data "external" "alarm_arns" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws cloudwatch describe-alarms", top = "MetricAlarms", next = "| .AlarmArn"})]
+}
+
+####################################################################
+# Create list of iam roles
+####################################################################
+data "external" "role_names" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws iam list-roles", top = "Roles", next = "| .RoleName' | grep -v 'AWSRes"})]
+}
+
+####################################################################
+# Create list of iam policies
+####################################################################
+data "external" "policy_arns" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws iam list-policies", top = "Policies", next = "| .Arn' | grep -v 'arn:aws:iam::aws:policy"})]
+}
+
+####################################################################
+# Create list of iam users
+####################################################################
+data "external" "user_names" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws iam list-users", top = "Users", next = "| .UserName"})]
+}
+
+
+####################################################################
+# Create list of amis
+####################################################################
+data "external" "ami_ids" {
+  program    = [
+    "bash",
+    "-c", 
+    templatefile("cli.tftpl", {input_string = "aws ec2 describe-images --owners ${data.aws_caller_identity.this.account_id}", top = "Images", next = "| .ImageId"})]
+}
